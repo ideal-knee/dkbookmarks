@@ -1,0 +1,12 @@
+{
+    "manifest_version": 2,
+
+    "name": "DKBookmarks",
+    "description": "This extension provides a better bookmark manager.",
+    "version": "1.0",
+
+    "chrome_url_overrides": {
+	"bookmarks": "page.html"
+    }
+}
+
