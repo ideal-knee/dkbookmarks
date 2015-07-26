@@ -14,4 +14,3 @@
                         :compiler {:output-to "gen/script.js"
                                    :optimizations :simple
                                    :pretty-print true } }]} )
-

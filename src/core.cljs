@@ -17,15 +17,17 @@
   (dommy/create-element :ul) )
 
 (defn new-list-item [text]
-  (dommy/set-text! (dommy/create-element :ul) text) )
+  (dommy/set-text! (dommy/create-element :li) text) )
 
 (defn print-node
   ([node] (print-node node (append-element (sel1 :#root) (new-list))))
   ([node parent-ul]
-     (append-element parent-ul (new-list-item (.-title node)))
+     (append-element parent-ul (new-list-item (let [title (.-title node)]
+                                                (if (empty? title)
+                                                  "untitled"
+                                                  title ) )))
      (let [child-ul (append-element parent-ul (new-list))]
        (doseq [child (.-children node)]
          (print-node child child-ul) ) ) ) )
 
 (with-root-node print-node)
-
