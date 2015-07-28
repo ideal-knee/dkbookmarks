@@ -1,6 +1,8 @@
 (ns dkbookmarks.core
-  (:require [dommy.core :as dommy :refer-macros [sel1]]) )
+  (:require [dommy.core :as dommy :refer-macros [sel1]]
+            [weasel.repl :as repl] ) )
 
+(repl/connect "ws://localhost:9001")
 (enable-console-print!)
 
 (defn print-object [object]
