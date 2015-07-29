@@ -32,4 +32,12 @@
        (doseq [child (.-children node)]
          (print-node child child-ul) ) ) ) )
 
+#_
 (with-root-node print-node)
+
+(defn depth-first-traverse [consume-fn node]
+  (consume-fn node)
+  (doseq [child (.-children node)]
+    (depth-first-traverse child consume-fn) ) )
+
+(with-root-node (partial depth-first-traverse #(.log js/console (.-title %))))
