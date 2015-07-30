@@ -38,6 +38,6 @@
 (defn depth-first-traverse [consume-fn node]
   (consume-fn node)
   (doseq [child (.-children node)]
-    (depth-first-traverse child consume-fn) ) )
+    (depth-first-traverse consume-fn child) ) )
 
 (with-root-node (partial depth-first-traverse #(.log js/console (.-title %))))
