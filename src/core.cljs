@@ -1,6 +1,7 @@
 (ns dkbookmarks.core
   (:require [dommy.core :as dommy :refer-macros [sel1]]
-            [weasel.repl :as repl] ) )
+            [weasel.repl :as repl]
+            [ajax.core :as ajax] ) )
 
 (repl/connect "ws://localhost:9001")
 (enable-console-print!)
@@ -40,4 +41,7 @@
   (doseq [child (.-children node)]
     (depth-first-traverse consume-fn child) ) )
 
+#_
 (with-root-node (partial depth-first-traverse #(.log js/console (.-title %))))
+
+(println (ajax/GET "http://localhost:3000/"))
