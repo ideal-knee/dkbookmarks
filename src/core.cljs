@@ -22,26 +22,30 @@
 (defn new-list-item [text]
   (dommy/set-text! (dommy/create-element :li) text) )
 
-(defn print-node
-  ([node] (print-node node (append-element (sel1 :#root) (new-list))))
-  ([node parent-ul]
-     (append-element parent-ul (new-list-item (let [title (.-title node)]
-                                                (if (empty? title)
-                                                  "untitled"
-                                                  title ) )))
-     (let [child-ul (append-element parent-ul (new-list))]
-       (doseq [child (.-children node)]
-         (print-node child child-ul) ) ) ) )
-
-#_
-(with-root-node print-node)
-
 (defn depth-first-traverse [consume-fn node]
-  (consume-fn node)
-  (doseq [child (.-children node)]
-    (depth-first-traverse consume-fn child) ) )
+  (let [child-consume-fn (consume-fn node)]
+    (doseq [child (.-children node)]
+      (depth-first-traverse child-consume-fn child) ) ) )
 
+(defn print-node
+  ([node] (print-node (append-element (sel1 :#root) (new-list)) node))
+  ([parent-ul node]
+   (append-element parent-ul (new-list-item (let [title (.-title node)]
+                                              (if (empty? title)
+                                                "untitled"
+                                                title ) )))
+   (let [child-ul (append-element parent-ul (new-list))]
+     (partial print-node child-ul) ) ) )
+
+;; Render as HTML list
+(with-root-node (partial depth-first-traverse print-node))
+
+;; Print to console
 #_
-(with-root-node (partial depth-first-traverse #(.log js/console (.-title %))))
+(with-root-node (partial depth-first-traverse
+                         (letfn [(print [o]
+                                   (.log js/console (.-title o))
+                                   print )]
+                           print )))
 
 (ajax/GET "http://localhost:3000/" :handler #(print-object %))
