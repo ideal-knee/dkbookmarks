@@ -44,4 +44,4 @@
 #_
 (with-root-node (partial depth-first-traverse #(.log js/console (.-title %))))
 
-(println (ajax/GET "http://localhost:3000/"))
+(ajax/GET "http://localhost:3000/" :handler #(print-object %))
