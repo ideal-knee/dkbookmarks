@@ -41,11 +41,19 @@
 (with-root-node (partial depth-first-traverse print-node))
 
 ;; Print to console
-#_
-(with-root-node (partial depth-first-traverse
-                         (letfn [(print [o]
-                                   (.log js/console (.-title o))
-                                   print )]
-                           print )))
+(defn do-tree [f]
+  (with-root-node (partial depth-first-traverse
+                           (letfn [(f-caller [o]
+                                     (f o)
+                                     f-caller )]
+                             f-caller ) )) )
 
-(ajax/GET "http://localhost:3000/" :handler #(print-object %))
+#_(do-tree print-object)
+#_(do-tree #(.log js/console (.-title %)))
+
+;; AJAX
+#_(ajax/GET "http://localhost:3000/" :handler #(print-object %))
+
+;; Accumulate nodes
+(def nodes (atom []))
+(do-tree #(swap! nodes conj %))
