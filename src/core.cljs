@@ -41,19 +41,38 @@
 (with-root-node (partial depth-first-traverse print-node))
 
 ;; Print to console
-(defn do-tree [f]
-  (with-root-node (partial depth-first-traverse
-                           (letfn [(f-caller [o]
-                                     (f o)
-                                     f-caller )]
-                             f-caller ) )) )
+(defn do-tree
+  ([f] (do-tree f identity))
+  ([f after-fn]
+   (with-root-node
+     #(do
+        (depth-first-traverse
+         (letfn [(f-caller [o]
+                   (f o)
+                   f-caller )]
+           f-caller )
+         % )
+        (after-fn) ) ) ) )
 
 #_(do-tree print-object)
 #_(do-tree #(.log js/console (.-title %)))
 
 ;; AJAX
-#_(ajax/GET "http://localhost:3000/" :handler #(print-object %))
+#_(ajax/GET "http://localhost:3000/" :handler #(print-object %) :error-handler print-object)
 
 ;; Accumulate nodes
 (def nodes (atom []))
-(do-tree #(swap! nodes conj %))
+
+(defn test-post []
+  (doseq [node @nodes]
+    (println "POSTing...")
+
+    (ajax/POST "http://localhost:3000/bookmarks/ajax_add"
+               :handler #(print-object %)
+               :format :json
+               :params {:url   (.-url node)
+                        :title (.-title node)
+                        :added (.-dateAdded node) } ) ) )
+
+(do-tree #(swap! nodes conj %) test-post)
+
